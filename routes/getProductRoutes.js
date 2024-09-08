@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllProducts, getProductsByCategory } = require('../service/productService'); // Import the service
+const { getAllProducts, getProductsByCategory } = require('../service/productService');  
 const router = express.Router();
 
 // GET /api/products - Get all products
@@ -16,6 +16,8 @@ router.get('/products', async (req, res) => {
 // GET /api/products/:category - Get products by category
 router.get('/products/:category', async (req, res) => {
   const { category } = req.params;
+  console.log(category);
+  
 
   try {
     const products = await getProductsByCategory(category);

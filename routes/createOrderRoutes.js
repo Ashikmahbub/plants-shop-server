@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const router = express.Router();
 
 router.post('/checkout', async (req, res) => {
-  const { name, email, phone, address, city, country, cart,shippingCharge comments, expectedDeliveryDate, giftNote, } = req.body;
+  const { name, email, phone, address, city, country, cart,shippingCharge, comments, expectedDeliveryDate, giftNote } = req.body;
   console.log(name, email, phone, address, city, country, comments, expectedDeliveryDate, giftNote);
 
   try {
@@ -12,11 +12,15 @@ router.post('/checkout', async (req, res) => {
     const cartTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
 
     // Generate a unique order code
-    const orderCode = `AS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const orderCode = `PT-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     const orderTotal = cartTotal+shippingCharge;
+    const paymentStatus = 'Awaiting Payment';
+    const deliveryStatus = 'Awaiting Delivery';
+    const orderStatus = 'Pending'
+    
 
     // Define a default status for new orders
-    const orderStatus = 'Pending'; // Example status, you can change it to whatever is appropriate
+     // Example status, you can change it to whatever is appropriate
 
     const orderData = {
       name,
@@ -27,11 +31,15 @@ router.post('/checkout', async (req, res) => {
       country,
       cart,
       orderCode,
-      orderTotal,   
-      orderStatus,  
+      orderTotal,
+      orderStatus,   
+       
       comments,  
       expectedDeliveryDate,  
-      giftNote,  
+      giftNote,
+      paymentStatus,
+      deliveryStatus,
+         
       createdAt: new Date(),
     };
 

@@ -14,9 +14,7 @@ async function connectToDatabase() {
     if (!dbConnection) {
       await client.connect();
       console.log("Connected to MongoDB");
-      const PORT = process.env.PORT || 5000;
-      app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-      dbConnection = client.db("Plants-shop");  
+      dbConnection = client.db(process.env.DB_NAME); // Select the database
     }
     return dbConnection;  
   } catch (err) {
@@ -24,6 +22,5 @@ async function connectToDatabase() {
     throw err;
   }
 }
-
 
 module.exports = { connectToDatabase };

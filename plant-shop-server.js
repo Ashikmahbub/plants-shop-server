@@ -2,11 +2,12 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const path = require("path");
-const productRoutes = require("./routes/getProductRoutes");
+const productManagementRoutes = require("./routes/productManagementRoutes");
+const getProductRoutes = require("./routes/getProductRoutes");
 const createOrderRoutes = require("./routes/createOrderRoutes");
 const salesRoutes = require("./routes/salesRoutes");
 const manageOrderRoutes = require("./routes/manageOrdersRoutes");
-const { connectToDatabase } = require("./dbConnection"); // Importing the dbConnection
+const { connectToDatabase } = require("./config/dbConnection"); // Importing the dbConnection
 
 const app = express();
 
@@ -17,7 +18,8 @@ app.use(express.json());
 connectToDatabase();  
 
 // API routes
-app.use("/api", productRoutes);
+app.use("/api", productManagementRoutes);
+app.use("/api", getProductRoutes);
 app.use("/api", createOrderRoutes);
 app.use("/api", salesRoutes);
 app.use("/api", manageOrderRoutes);

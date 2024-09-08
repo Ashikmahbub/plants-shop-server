@@ -6,6 +6,9 @@ const {
   getOrderById,
   updateOrder,
   deleteOrder,
+  updateOrderStatus, // Include status update functions
+  updatePaymentStatus,
+  updateDeliveryStatus,
 } = require('../service/orderService'); // Import the service functions
 
 // Middleware for handling errors
@@ -25,7 +28,7 @@ router.get('/admin/orders', async (req, res) => {
 });
 
 // Fetch a single order by ID
-router.get('/admin/orders/:orderId', async (req, res) => {
+router.get('/admin/orders/:orderId/edit', async (req, res) => {
   const { orderId } = req.params;
 
   try {
@@ -41,12 +44,11 @@ router.get('/admin/orders/:orderId', async (req, res) => {
   }
 });
 
-// Update an order
+// Update an order (address, phone, shipping, cart)
 router.put('/admin/orders/:orderId', async (req, res) => {
   const { orderId } = req.params;
   const { address, phone, shippingCharge, cart } = req.body;
 
-  // Prepare the update data
   const updateData = {
     ...(address && { address }),
     ...(phone && { phone }),
@@ -66,6 +68,46 @@ router.put('/admin/orders/:orderId', async (req, res) => {
     }
   } catch (error) {
     errorHandler(res, error, 'Failed to update order');
+  }
+});
+
+// **New API for updating Payment Status**
+router.put('/admin/orders/:orderId/payment-status', async (req, res) => {
+  const { orderId } = req.params;
+  const { paymentStatus } = req.body;
+
+  try {
+    const result = await updatePaymentStatus(orderId, paymentStatus);
+
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: 'Payment status updated successfully' });
+    } else if (result.matchedCount === 0) {
+      res.status(404).json({ message: 'Order not found' });
+    } else {
+      res.status(304).json({ message: 'No changes were made' });
+    }
+  } catch (error) {
+    errorHandler(res, error, 'Failed to update payment status');
+  }
+});
+
+// **New API for updating Delivery Status**
+router.put('/admin/orders/:orderId/delivery-status', async (req, res) => {
+  const { orderId } = req.params;
+  const { deliveryStatus } = req.body;
+
+  try {
+    const result = await updateDeliveryStatus(orderId, deliveryStatus);
+
+    if (result.modifiedCount === 1) {
+      res.status(200).json({ message: 'Delivery status updated successfully' });
+    } else if (result.matchedCount === 0) {
+      res.status(404).json({ message: 'Order not found' });
+    } else {
+      res.status(304).json({ message: 'No changes were made' });
+    }
+  } catch (error) {
+    errorHandler(res, error, 'Failed to update delivery status');
   }
 });
 

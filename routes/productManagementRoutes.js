@@ -24,15 +24,18 @@ const upload = multer({ storage: storage });
 // POST /api/admin/products - Add a product
 router.post('/admin/products', upload.single('image'), async (req, res) => {
   const { title, category, weight, price } = req.body;
+  const lowerCaseCategory = category.toLowerCase(); 
+  
   const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+  
 
   try {
     const productData = {
       title,
-      category,
+      category:lowerCaseCategory,
       weight,
       price,
-      imageUrl,
+      imageUrl
     };
 
     await createProduct(productData); // Use the service to create a product
@@ -43,19 +46,28 @@ router.post('/admin/products', upload.single('image'), async (req, res) => {
   }
 });
 
-// PUT /api/admin/products/:id - Update a product by ID
+ 
 router.put('/admin/products/:id', upload.single('image'), async (req, res) => {
   const { id } = req.params;
   const { title, category, weight, price } = req.body;
-  const imageUrl = req.file ? `/uploads/${req.file.filename}` : '';
+  const lowerCaseCategory = category.toLowerCase(); 
 
   try {
+     
+    const product = await getProductById(id);   
+
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+ 
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : product.imageUrl;
+
     const updatedData = {
       title,
-      category,
+      category:lowerCaseCategory,
       weight,
       price,
-      imageUrl,
+      imageUrl,   
     };
 
     const result = await updateProduct(id, updatedData);
@@ -70,6 +82,8 @@ router.put('/admin/products/:id', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Failed to update product' });
   }
 });
+
+
 
 // DELETE /api/admin/products/:id - Delete a product by ID
 router.delete('/admin/products/:id', async (req, res) => {
