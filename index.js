@@ -27,5 +27,6 @@ app.use("/api", manageOrderRoutes);
 // Serve static files from the 'uploads' folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Export the app for Vercel
-module.exports = app;
+// Start the server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
