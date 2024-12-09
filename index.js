@@ -27,7 +27,11 @@ app.use("/api", manageOrderRoutes);
 // Serve static files from the 'uploads' folder
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Define a route for the root URL
+app.get("/", (req, res) => {
+  res.send("Welcome to CBH API");
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
- 
